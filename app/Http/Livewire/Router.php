@@ -9,8 +9,8 @@ class Router extends Component
 {
     // Route mapper
     public array $pages = [
-        'dashboard' => Game\Dashboard::class,
-        'battle-pass' => Game\BattlePass::class,
+        '' => Game\Dashboard::class,
+        'battle-pass/season-one' => Game\BattlePass::class,
     ];
 
     public string $page;
@@ -27,7 +27,7 @@ class Router extends Component
 
     private function navigate($location)
     {
-        $this->page = ($this->pages[$location] ?? key($this->pages))::getName();
         $this->location = $location; // Update browser URL
+        $this->page = ($this->pages[$location] ?? abort(404))::getName();
     }
 }

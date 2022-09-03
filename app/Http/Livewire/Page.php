@@ -16,6 +16,7 @@ class Page extends Component
 
     public function redirectTo($location)
     {
+        $this->dispatchBrowserEvent('router-loading');
         $this->emitTo('router', 'redirect-to', $location);
     }
 }

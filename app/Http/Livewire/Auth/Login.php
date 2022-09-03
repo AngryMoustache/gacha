@@ -37,6 +37,6 @@ class Login extends Component
 
         $user->loginAs();
 
-        return redirect()->to(route('game.dashboard'));
+        return redirect()->to('/');
     }
 }

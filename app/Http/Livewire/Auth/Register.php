@@ -35,6 +35,6 @@ class Register extends Component
         $user->save();
         $user->loginAs();
 
-        return redirect()->to(route('game.dashboard'));
+        return redirect()->to('/');
     }
 }
