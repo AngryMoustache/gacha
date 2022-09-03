@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('username');
             $table->string('email')->nullable();
             $table->string('password');
-            $table->integer('stamina')->default(120);
             $table->dateTime('last_login_at')->nullable();
             $table->timestamps();
         });

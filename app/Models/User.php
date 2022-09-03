@@ -24,6 +24,19 @@ class User extends Model
         'last_login_at' => 'datetime',
     ];
 
+    public function currencies()
+    {
+        return $this->belongsToMany(Currency::class)
+            ->withPivot('amount');
+    }
+
+    public function currency($type)
+    {
+        return $this->currencies()
+            ->where('currencies.working_title', $type)
+            ->first() ?? 0;
+    }
+
     public static function current()
     {
         return self::find(session(self::LOGIN_SESSION));
@@ -32,5 +45,8 @@ class User extends Model
     public function loginAs()
     {
         session([self::LOGIN_SESSION => $this->id]);
+
+        $this->last_login_at = now();
+        $this->saveQuietly();
     }
 }
