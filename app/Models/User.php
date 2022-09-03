@@ -24,6 +24,10 @@ class User extends Model
         'last_login_at' => 'datetime',
     ];
 
+    protected $with = [
+        'currencies',
+    ];
+
     public function currencies()
     {
         return $this->belongsToMany(Currency::class)
