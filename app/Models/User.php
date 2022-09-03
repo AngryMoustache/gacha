@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HandleCurrency;
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
+    use HandleCurrency;
+
     public const LOGIN_SESSION = 'logged-in-as';
 
     protected $fillable = [
@@ -27,19 +30,6 @@ class User extends Model
     protected $with = [
         'currencies',
     ];
-
-    public function currencies()
-    {
-        return $this->belongsToMany(Currency::class)
-            ->withPivot('amount');
-    }
-
-    public function currency($type)
-    {
-        return $this->currencies()
-            ->where('currencies.working_title', $type)
-            ->first() ?? 0;
-    }
 
     public static function current()
     {

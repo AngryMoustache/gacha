@@ -13,11 +13,13 @@ class Currency extends Model
         'working_title',
         'description',
         'icon_id',
+        'shown_when_empty',
         'maximum',
     ];
 
     public $casts = [
         'working_title' => CurrencyType::class,
+        'shown_when_empty' => 'boolean',
     ];
 
     public function icon()

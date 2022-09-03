@@ -15,11 +15,7 @@ class RegenStamina extends Command
     public function handle()
     {
         User::get()->each(function (User $user) {
-            $stamina = $user->currency(CurrencyType::STAMINA);
-            if ($stamina->pivot?->amount < $stamina->maximum) {
-                $stamina->pivot->amount += config('game.stamina-regen');
-                $stamina->pivot->save();
-            }
+            $user->addCurrency(CurrencyType::STAMINA, config('game.stamina-regen', 1));
         });
     }
 }

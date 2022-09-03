@@ -2,9 +2,11 @@
     <x-card class="m-4 p-4">
         <ul>
             @foreach ($user->currencies as $currency)
-                <li class="flex">
-                    <x-ui.currency :currency="$currency" />
-                </li>
+                @if ($currency->pivot->amount > 0 || $currency->shown_when_empty)
+                    <li class="flex">
+                        <x-ui.currency :currency="$currency" />
+                    </li>
+                @endif
             @endforeach
         </ul>
 
