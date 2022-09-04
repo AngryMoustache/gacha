@@ -6,7 +6,6 @@
 
     <img class="w-8 h-8" src="{{ $currency->icon?->format('thumb') }}">
 
-
     <x-slot name="tooltip">
         <strong class="text-lg">{{ $currency->name }}</strong>
         {!! $currency->description !!}

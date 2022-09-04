@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Game;
+namespace App\Http\Livewire\Pages;
 
 use App\Http\Livewire\Page;
 

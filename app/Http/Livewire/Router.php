@@ -2,15 +2,15 @@
 
 namespace App\Http\Livewire;
 
-use App\Http\Livewire\Game;
+use App\Http\Livewire\Pages;
 use Livewire\Component;
 
 class Router extends Component
 {
     // Route mapper
     public array $pages = [
-        '' => Game\Dashboard::class,
-        'battle-pass/season-one' => Game\BattlePass::class,
+        '' => Pages\Dashboard::class,
+        'battle-pass/season-one' => Pages\BattlePass::class,
     ];
 
     public string $page;
