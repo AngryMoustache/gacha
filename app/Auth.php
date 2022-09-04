@@ -11,7 +11,8 @@ class Auth
 
     public function current()
     {
-        return $this->user ??= User::find(session(self::LOGIN_SESSION));
+        return $this->user ??= User::find(session(self::LOGIN_SESSION))
+            ?? redirect()->to(route('auth.login'))->send();
     }
 
     public function refresh()
