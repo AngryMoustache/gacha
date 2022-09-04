@@ -1,5 +1,5 @@
 <div
-    class="relative w-full"
+    class="relative"
     x-data="{
         hover: false,
         top: 0,

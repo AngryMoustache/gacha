@@ -9,8 +9,11 @@ use App\Models\Currency;
 
 class BattlePass extends Page
 {
+    public ModelsBattlePass $battlePass;
+
     public function mount()
     {
+        $this->user = Auth::current();
         $this->battlePass = ModelsBattlePass::current()
             ->with('rewards')
             ->first();
@@ -28,6 +31,7 @@ class BattlePass extends Page
             ->each(fn ($reward) => $reward->claim());
 
         // TODO: flash item get
-        return;
+
+        $this->battlePass->refresh();
     }
 }

@@ -9,15 +9,12 @@ trait HandleCurrency
 {
     public function currencies()
     {
-        return $this->belongsToMany(Currency::class)
-            ->withPivot('amount');
+        return $this->belongsToMany(Currency::class)->withPivot('amount');
     }
 
     public function currency($type)
     {
-        return $this->currencies()
-            ->where('currencies.working_title', $type)
-            ->first() ?? 0;
+        return $this->currencies->where('working_title', $type)->first() ?? 0;
     }
 
     public function setCurrency(CurrencyType $currency, int $value = 0)

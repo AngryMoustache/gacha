@@ -40,6 +40,16 @@ class BattlePass extends Model
             ->whereDate('end_date', '>', today());
     }
 
+    public function getExperienceAttribute()
+    {
+        return Auth::current()->currency(CurrencyType::BATTLE_PASS);
+    }
+
+    public function getNextLevelInAttribute()
+    {
+        return 1000 - ($this->experience->pivot->amount % 1000);
+    }
+
     public function hasRewardsAt($level): bool
     {
         return !! $this->getRewardsFor($level)->count();
@@ -52,8 +62,16 @@ class BattlePass extends Model
 
     public function canClaim($level)
     {
-        return Auth::current()
-            ->currency(CurrencyType::BATTLE_PASS)
-            ->has($level * 1000);
+        return $this->hasExperience($level) && ! $this->hasClaimed($level);
+    }
+
+    public function hasExperience($level)
+    {
+        return $this->experience->has($level * 1000);
+    }
+
+    public function hasClaimed($level)
+    {
+        return !! $this->getRewardsFor($level)->first()?->claims?->isNotEmpty();
     }
 }

@@ -11,7 +11,7 @@ class Auth
 
     public function current()
     {
-        return $this->user ?? User::find(session(self::LOGIN_SESSION));
+        return $this->user ??= User::find(session(self::LOGIN_SESSION));
     }
 
     public function loginAs($user)
