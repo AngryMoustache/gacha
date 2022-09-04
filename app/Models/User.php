@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
+use App\Facades\Auth;
 use App\Models\Traits\HandleCurrency;
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
     use HandleCurrency;
-
-    public const LOGIN_SESSION = 'logged-in-as';
 
     protected $fillable = [
         'username',
@@ -31,16 +30,8 @@ class User extends Model
         'currencies',
     ];
 
-    public static function current()
-    {
-        return self::find(session(self::LOGIN_SESSION));
-    }
-
     public function loginAs()
     {
-        session([self::LOGIN_SESSION => $this->id]);
-
-        $this->last_login_at = now();
-        $this->saveQuietly();
+        Auth::loginAs($this);
     }
 }

@@ -1,5 +1,5 @@
 <x-ui.tooltip class="flex">
-    {{ number_format($currency->pivot->amount, 0, ',', '.') }}
+    {{ number_format($currency?->pivot->amount, 0, ',', '.') }}
     @if ($currency->maximum)
         / {{ number_format($currency->maximum, 0, ',', '.') }}
     @endif

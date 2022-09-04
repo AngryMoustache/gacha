@@ -26,4 +26,9 @@ class Currency extends Model
     {
         return $this->belongsTo(Attachment::class);
     }
+
+    public function has($amount)
+    {
+        return ($this->pivot?->amount ?? 0) >= $amount;
+    }
 }

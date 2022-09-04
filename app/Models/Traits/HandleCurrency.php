@@ -30,7 +30,7 @@ trait HandleCurrency
     public function addCurrency(CurrencyType $currency, int $value = 1)
     {
         $currency = $this->currency($currency);
-        ($currency->pivot?->amount < $currency->maximum)
+        ($currency->pivot?->amount < ($currency->maximum ?? INF))
             ? $currency->pivot->amount += $value
             : $currency->pivot->amount = $currency->maximum;
 

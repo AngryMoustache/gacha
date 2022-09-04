@@ -2,7 +2,7 @@
 
 use AngryMoustache\Rambo\Resources\Administrator;
 use AngryMoustache\Rambo\Resources\Attachment;
-use App\Rambo\Currency;
+use App\Rambo;
 
 return [
     'admin-route' => 'admin',
@@ -10,14 +10,16 @@ return [
     'resources' => [
         Attachment::class,
         Administrator::class,
-        Currency::class,
+        Rambo\Currency::class,
+        Rambo\BattlePass::class,
     ],
     'navigation' => [
         'General' => [
             Administrator::class,
             Attachment::class,
         ],
-        Currency::class,
+        Rambo\Currency::class,
+        Rambo\BattlePass::class,
     ],
     'cropper' => [
         'formats' => [

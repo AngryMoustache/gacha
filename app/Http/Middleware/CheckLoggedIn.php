@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
+use App\Facades\Auth;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -10,7 +10,7 @@ class CheckLoggedIn
 {
     public function handle(Request $request, Closure $next, ...$guards)
     {
-        if (! User::current()) {
+        if (! Auth::current()) {
             return redirect(route('auth.login'));
         }
 
