@@ -14,6 +14,9 @@ class BattlePass extends Model
         'name',
         'slug',
         'attachment_id',
+        'needed_currency',
+        'levels_amount',
+        'per_level_requirement',
         'start_date',
         'end_date',
     ];
@@ -21,6 +24,7 @@ class BattlePass extends Model
     public $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'needed_currency' => CurrencyType::class,
     ];
 
     public function attachment()
@@ -42,12 +46,24 @@ class BattlePass extends Model
 
     public function getExperienceAttribute()
     {
-        return Auth::current()->currency(CurrencyType::BATTLE_PASS);
+        return Auth::current()->currency($this->needed_currency);
     }
 
     public function getNextLevelInAttribute()
     {
-        return 1000 - ($this->experience->pivot->amount % 1000);
+        return $this->per_level_requirement - (
+            $this->experience->pivot->amount % $this->per_level_requirement
+        );
+    }
+
+    public function getIsFinishedAttribute()
+    {
+        return $this->currentLevel >= $this->levels_amount;
+    }
+
+    public function getCurrentLevelAttribute()
+    {
+        return floor($this->experience->pivot->amount / $this->per_level_requirement);
     }
 
     public function hasRewardsAt($level): bool
@@ -67,7 +83,7 @@ class BattlePass extends Model
 
     public function hasExperience($level)
     {
-        return $this->experience->has($level * 1000);
+        return $this->experience->has($level * $this->per_level_requirement);
     }
 
     public function hasClaimed($level)

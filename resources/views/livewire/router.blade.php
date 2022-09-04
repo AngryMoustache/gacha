@@ -9,7 +9,8 @@
     </div>
 
     <livewire:is
-        :wire:key="$page"
-        :component="$page"
+        :wire:key="$page['route']"
+        :component="$page['component']"
+        :parameters="$page['parameters']"
     >
 </div>

@@ -14,6 +14,11 @@ class Auth
         return $this->user ??= User::find(session(self::LOGIN_SESSION));
     }
 
+    public function refresh()
+    {
+        return $this->user = $this->current()?->refresh();
+    }
+
     public function loginAs($user)
     {
         session([self::LOGIN_SESSION => $user->id]);

@@ -24,6 +24,7 @@ class Currency extends Resource
                 ->rules('required'),
 
             SelectField::make('working_title', 'Working title')
+                ->nullable()
                 ->options(CurrencyType::list())
                 ->hideFrom(['edit', 'show', 'index'])
                 ->rules('required'),

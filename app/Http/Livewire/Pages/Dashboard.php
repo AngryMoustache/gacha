@@ -7,7 +7,7 @@ use App\Http\Livewire\Page;
 
 class Dashboard extends Page
 {
-    public function mount()
+    public function mount($parameters)
     {
         $this->user = Auth::current();
     }

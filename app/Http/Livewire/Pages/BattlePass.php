@@ -10,10 +10,13 @@ class BattlePass extends Page
 {
     public ModelsBattlePass $battlePass;
 
-    public function mount()
+    public function mount($parameters)
     {
         $this->user = Auth::current();
-        $this->battlePass = ModelsBattlePass::current()->with('rewards')->first();
+        $this->battlePass = ModelsBattlePass::current()
+            ->where('slug', $parameters['battlePass'])
+            ->with('rewards')
+            ->first();
     }
 
     public function claimReward($level)

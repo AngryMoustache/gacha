@@ -12,7 +12,7 @@
                 absolute bottom-0 right-0 left-0
                 text-xs text-center text-white
             ">
-                x{{ number_format($amount, 0, ',', '.') }}
+                {{ number_format($amount, 0, ',', '.') }}
             </span>
         @endif
 

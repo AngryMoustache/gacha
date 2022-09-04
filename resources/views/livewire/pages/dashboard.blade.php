@@ -12,6 +12,10 @@
 
         <x-router.link to="battle-pass/season-one">
             Show me the battle pass
+        </x-router.link><br>
+
+        <x-router.link to="battle-pass/gem-hoarder">
+            Show me the gem pass
         </x-router.link>
     </x-card>
 </div>

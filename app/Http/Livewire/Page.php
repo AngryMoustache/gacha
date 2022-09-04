@@ -10,9 +10,14 @@ class Page extends Component
 {
     public User $user;
 
-    public function mount()
+    public function mount($parameters)
     {
         $this->user = Auth::current();
+    }
+
+    public function hydrate()
+    {
+        $this->user = Auth::refresh();
     }
 
     public function redirectTo($location)
