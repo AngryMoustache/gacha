@@ -12,6 +12,7 @@ class Router extends Component
     public array $router = [
         '' => Pages\Dashboard::class,
         'battle-pass/{battlePass}' => Pages\BattlePass::class,
+        'game/test' => Pages\TestGame::class,
     ];
 
     public array $page;
