@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -12,7 +11,7 @@ class Router extends Component
     public array $router = [
         '' => Pages\Dashboard::class,
         'battle-pass/{battlePass}' => Pages\BattlePass::class,
-        'game/test' => Pages\TestGame::class,
+        'banners' => Pages\Banners::class,
     ];
 
     public array $page;

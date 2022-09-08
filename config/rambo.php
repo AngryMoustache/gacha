@@ -12,6 +12,8 @@ return [
         Administrator::class,
         Rambo\Currency::class,
         Rambo\BattlePass::class,
+        Rambo\Hero::class,
+        Rambo\Banner::class,
     ],
     'navigation' => [
         'General' => [
@@ -20,6 +22,8 @@ return [
         ],
         Rambo\Currency::class,
         Rambo\BattlePass::class,
+        Rambo\Hero::class,
+        Rambo\Banner::class,
     ],
     'cropper' => [
         'formats' => [

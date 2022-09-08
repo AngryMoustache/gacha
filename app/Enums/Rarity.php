@@ -2,12 +2,13 @@
 
 namespace App\Enums;
 
-enum CurrencyType: string
+enum Rarity: int
 {
-    case STAMINA = 'stamina';
-    case BATTLE_PASS = 'battle-pass';
-    case GEMS = 'gems';
-    case BANNER_TICKETS = 'banner-tickets';
+    case ONE = 1;
+    case TWO = 2;
+    case THREE = 3;
+    case FOUR = 4;
+    case FIVE = 5;
 
     public static function list()
     {
