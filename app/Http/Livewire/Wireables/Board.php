@@ -14,32 +14,24 @@ class Board implements Wireable
         public int $width = 5,
         public int $height = 5
     ) {
-        $this->matrix = (new Collection)
-            ->pad($this->height, [])
-            ->map(fn ($row) => collect($row)->pad($this->width, null));
+        $this->matrix = (new Collection)->pad($this->height * $this->width, []);
     }
 
     public function fill()
     {
-        $this->loop(function ($h, $w) {
-            $this->matrix[$h][$w] = $this->newStoneAt($h, $w);
+        $this->matrix = $this->matrix->map(function ($stone, $key) {
+            $y = (int) floor($key / $this->height);
+            $x = (int) floor($key % $this->width);
+
+            return $this->newStoneAt($x, $y);
         });
     }
 
-    public function loop($callback, $matrix = null)
-    {
-        ($matrix ?? $this->matrix)->each(function ($columns, $row) use ($callback) {
-            $columns->each(function ($stone, $column) use ($callback, $row) {
-                $callback($row, $column, $stone);
-            });
-        });
-    }
-
-    public function newStoneAt($y, $x, $stone = null)
+    public function newStoneAt($x, $y, $type = null)
     {
         return (object) [
             'key' => rand(0, 999999),
-            'value' => $stone ?? Stone::random()->value,
+            'value' => $type ?? Stone::random()->value,
             'x' => $x,
             'y' => $y,
         ];
@@ -57,9 +49,7 @@ class Board implements Wireable
     public static function fromLivewire($value)
     {
         $board = new self($value['width'], $value['height']);
-        $board->matrix = collect($value['matrix'])->map(function ($row) {
-            return collect($row)->map(fn ($stone) => (object) $stone);
-        });
+        $board->matrix = collect($value['matrix'])->map(fn ($stone) => (object) $stone);
 
         return $board;
     }
