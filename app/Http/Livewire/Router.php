@@ -12,6 +12,7 @@ class Router extends Component
         '' => Pages\Dashboard::class,
         'battle-pass/{battlePass}' => Pages\BattlePass::class,
         'banners' => Pages\Banners::class,
+        'game/test' => Pages\TestGame::class,
     ];
 
     public array $page;

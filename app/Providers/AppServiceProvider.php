@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Auth;
 use App\Models;
 use App\Observers;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,5 +21,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Models\User::observe(Observers\UserObserver::class);
         Models\Currency::observe(Observers\CurrencyObserver::class);
+
+        Collection::macro('transpose', function () {
+            return new static(array_map(
+                fn (...$items) => $items,
+                ...$this->values()->toArray()
+            ));
+        });
     }
 }
