@@ -16,9 +16,4 @@ class TestGame extends Page
         $this->board = new Board;
         $this->board->fill();
     }
-
-    public function parse()
-    {
-        $this->board->parse();
-    }
 }
