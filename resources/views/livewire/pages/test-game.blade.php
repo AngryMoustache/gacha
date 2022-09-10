@@ -11,6 +11,8 @@
                 </div>
             </template>
         </div>
+
+        <div x-html="possibleMoves.length"></div>
     </x-card>
 
     <script>
@@ -21,6 +23,7 @@
                 selected: null,
                 canSelect: false,
                 showSelected: false,
+                possibleMoves: [],
                 types: @json($types),
 
                 init () {
@@ -38,10 +41,12 @@
                         window.setTimeout(() => {
                             this.board.dropStones()
                             window.setTimeout(() => this.parseBoard(), 750);
-                        }, 200);
+                        }, 300);
                     } else {
                         this.canSelect = true
                     }
+
+                    this.possibleMoves = this.board.checkMoves()
                 },
 
                 select (stone) {
@@ -107,35 +112,86 @@
 
                 // Horizontal matches
                 for (let h = 0; h < this.height; h++) {
-                    hits.push(this.checkRow(this.getRow(h)))
+                    hits.push(this.checkRow(this.getRow(h)).flat())
                 }
 
                 // Vertical matches
                 for (let w = 0; w < this.width; w++) {
-                    hits.push(this.checkRow(this.getColumn(w)))
+                    hits.push(this.checkRow(this.getColumn(w)).flat())
                 }
 
                 return hits.flat()
             }
 
-            checkRow (row) {
+            checkMoves () {
+                let moves = []
+
+                // Horizontal moves
+                for (let h = 0; h < this.height; h++) {
+                    moves.push(this.checkRow(this.getRow(h), 2))
+                }
+
+                // Vertical moves
+                for (let w = 0; w < this.width; w++) {
+                    moves.push(this.checkRow(this.getColumn(w), 2))
+                }
+
+                console.log(
+                    this.getRow(0),
+                    this.checkRow(this.getRow(0), 2, 2)
+                )
+
+                return moves
+                    .filter((move) => move[0]?.length > 0)
+                    .filter((move) => this.canHaveMatch(move))
+                    .flat()
+            }
+
+            canHaveMatch (stones) {
+                // Check all 6 possible stones
+                return stones.filter((stone) => {
+                    if (! (stone[0].x === stone[1].x)) {
+                        // Horizontal
+                        return ([
+                            this.findAt(stone[0].x - 1, stone[0].y - 1)?.value,
+                            this.findAt(stone[0].x - 1, stone[0].y + 1)?.value,
+                            this.findAt(stone[0].x - 2, stone[0].y)?.value,
+                            this.findAt(stone[1].x + 1, stone[1].y - 1)?.value,
+                            this.findAt(stone[1].x + 1, stone[1].y + 1)?.value,
+                            this.findAt(stone[1].x + 2, stone[1].y)?.value,
+                        ].includes(stone[0].value))
+                    }
+
+                    // Vertical
+                    return ([
+                        this.findAt(stone[0].x - 1, stone[0].y - 1)?.value,
+                        this.findAt(stone[0].x + 1, stone[0].y - 1)?.value,
+                        this.findAt(stone[0].x, stone[0].y - 2)?.value,
+                        this.findAt(stone[1].x - 1, stone[1].y + 1)?.value,
+                        this.findAt(stone[1].x + 1, stone[1].y + 1)?.value,
+                        this.findAt(stone[1].x, stone[1].y + 2)?.value,
+                    ].includes(stone[0].value))
+                }).length > 0
+            }
+
+            checkRow (row, amount = 3, skip = 1) {
                 let foundType = null
                 let matches = []
                 let hits = []
 
                 for (let i = 0; i < row.length; i++) {
                     foundType = row[i].value
-                    if (foundType !== matches[matches.length - 1]?.value) {
+                    if (foundType !== matches[matches.length - skip]?.value) {
                         matches = []
                     }
 
                     matches.push(row[i])
-                    if (matches.length >= 3 && row[i + 1] !== foundType) {
+                    if (matches.length >= amount && row[i + skip] !== foundType) {
                         hits.push(matches)
                     }
                 }
 
-                return hits.flat()
+                return hits
             }
 
             dropStones () {

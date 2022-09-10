@@ -8,10 +8,12 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://use.fontawesome.com/b42362407e.js"></script>
         <script src="//unpkg.com/alpinejs" defer></script>
+        {{-- @vite(['resources/css/app.css']) --}}
         <livewire:styles />
     </head>
     <body class="bg-slate-100">
         {{ $slot }}
         <livewire:scripts />
+        {{-- @vite(['resources/js/app.js']) --}}
     </body>
 </html>
