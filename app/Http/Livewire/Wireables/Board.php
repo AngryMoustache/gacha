@@ -19,9 +19,9 @@ class Board implements Wireable
 
     public function fill()
     {
-        $this->matrix = $this->matrix->map(function ($stone, $key) {
-            $y = (int) floor($key / $this->height);
+        $this->matrix = $this->matrix->keys()->map(function ($key) {
             $x = (int) floor($key % $this->width);
+            $y = (int) floor($key / $this->width);
 
             return $this->newStoneAt($x, $y);
         });
