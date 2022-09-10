@@ -1,18 +1,29 @@
 <div class="grid m-4 gap-4">
     <x-card x-data="game">
-        <div class="relative overflow-hidden" :style="'width: ' + (board.width * 4.25) + 'rem; height: ' + (board.height * 4.25) + 'rem'">
+        <div
+            x-show="readyToLoad"
+            class="relative overflow-hidden"
+            :style="'width: ' + (board.width * 4.25) + 'rem; height: ' + (board.height * 4.25) + 'rem'"
+        >
             <template x-for="stone in board.matrix" :key="stone.key">
                 <div
                     @click="select(stone)"
                     :class="'stone absolute m-1 w-16 h-16 bg-' + stone.value + '-500 rounded-lg ' + (showSelected && stone.key === selected?.key ? 'stone-selected' : '')"
                     :style="'top: ' + (stone.y * 4.25) + 'rem; left: ' + (stone.x * 4.25) + 'rem'"
+                    {{-- :src="'{{ asset('./images/stones') }}/' + stone.value + '.png'" --}}
                 >
                     {{-- TODO: icon --}}
                 </div>
             </template>
         </div>
 
-        <div x-html="possibleMoves.length"></div>
+        <div class="pt-4 pl-2">
+            You have <span x-html="possibleMoves.length"></span> possible move(s)<br>
+            Score: <span x-html="score"></span><br>
+            <div x-show="combo > 1">
+                <span x-html="combo"></span>x combo !!!
+            </div>
+        </div>
     </x-card>
 
     <script>
@@ -24,32 +35,44 @@
                 canSelect: false,
                 showSelected: false,
                 possibleMoves: [],
+                combo: 0,
+                score: 0,
+                readyToLoad: false,
                 types: @json($types),
 
                 init () {
                     this.board = new Board(@json($board).matrix, this.types)
-                    window.setTimeout(() => this.parseBoard(), 200);
+                    this.parseBoard(true)
                 },
 
-                parseBoard () {
+                parseBoard (fast = false) {
                     let matches = this.board.checkMatches()
 
                     if (matches.length > 0) {
+                        this.combo++
+                        this.score += (matches.length * this.combo)
                         this.canSelect = false
                         this.board.clearStones(matches)
 
                         window.setTimeout(() => {
                             this.board.dropStones()
-                            window.setTimeout(() => this.parseBoard(), 750);
-                        }, 300);
+                            window.setTimeout(() => this.parseBoard(fast), fast ? 1 : 750);
+                        }, fast ? 1 : 300);
                     } else {
-                        this.canSelect = true
                         this.possibleMoves = this.board.checkMoves()
 
                         if (this.possibleMoves.length === 0) {
                             this.canSelect = false
                             this.board.shuffle()
-                            window.setTimeout(() => this.parseBoard(), 750);
+                            window.setTimeout(() => this.parseBoard(fast), fast ? 1 : 750);
+                        } else {
+                            if (this.readyToLoad === false) {
+                                this.readyToLoad = true
+                                this.combo = 0
+                                this.score = 0
+                            }
+
+                            this.canSelect = true
                         }
                     }
                 },
@@ -85,6 +108,7 @@
 
                     window.setTimeout(() => {
                         if (this.board.checkMatches().length > 0) {
+                            this.combo = 0
                             this.parseBoard()
                         } else {
                             this.swap(this.selected, stone, 'x')

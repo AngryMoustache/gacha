@@ -9,6 +9,7 @@ enum Stone: string
     case GREEN = 'green';
     case PURPLE = 'purple';
     case YELLOW = 'yellow';
+
     // case PINK = 'pink';
     // case SLATE = 'slate';
     // case ORANGE = 'orange';

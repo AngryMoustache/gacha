@@ -29,13 +29,9 @@ class Board implements Wireable
 
     public function newStoneAt($x, $y, $type = null)
     {
-        $value = $type ?? Stone::random()->value;
-
-        // Check in a cross to make sure we don't make matches when the game starts
-
         return (object) [
             'key' => rand(0, 999999),
-            'value' => $value,
+            'value' => $type ?? Stone::random()->value,
             'x' => $x,
             'y' => $y,
         ];
