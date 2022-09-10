@@ -18,7 +18,6 @@ class TestGame extends Page
         $this->types = collect(Stone::cases())->pluck('value')->toArray();
 
         $this->board = new Board(7, 5);
-        $this->board = new Board(3, 3);
         $this->board->fill();
     }
 }

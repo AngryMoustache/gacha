@@ -44,9 +44,14 @@
                         }, 300);
                     } else {
                         this.canSelect = true
-                    }
+                        this.possibleMoves = this.board.checkMoves()
 
-                    this.possibleMoves = this.board.checkMoves()
+                        if (this.possibleMoves.length === 0) {
+                            this.canSelect = false
+                            this.board.shuffle()
+                            window.setTimeout(() => this.parseBoard(), 750);
+                        }
+                    }
                 },
 
                 select (stone) {
@@ -91,7 +96,7 @@
                     }, 500)
                 },
 
-                swap(object1, object2, key) {
+                swap (object1, object2, key) {
                     const temp = object1[key]
                     object1[key] = object2[key]
                     object2[key] = temp
@@ -107,17 +112,29 @@
                 this.types = types
             }
 
+            shuffle () {
+                let coords = this.matrix.map((e) => ({x: e.x, y: e.y})).sort((a, b) => 0.5 - Math.random())
+                let newCoords
+
+                this.matrix.sort((a, b) => 0.5 - Math.random()).forEach((stone) => {
+                    newCoords = coords.pop()
+                    stone.x = newCoords.x
+                    stone.y = newCoords.y
+                    stone.value = this.getRandomType()
+                })
+            }
+
             checkMatches () {
                 let hits = []
 
                 // Horizontal matches
                 for (let h = 0; h < this.height; h++) {
-                    hits.push(this.checkRow(this.getRow(h)).flat())
+                    hits.push(this.checkStraightRow(this.getRow(h)).flat())
                 }
 
                 // Vertical matches
                 for (let w = 0; w < this.width; w++) {
-                    hits.push(this.checkRow(this.getColumn(w)).flat())
+                    hits.push(this.checkStraightRow(this.getColumn(w)).flat())
                 }
 
                 return hits.flat()
@@ -125,25 +142,27 @@
 
             checkMoves () {
                 let moves = []
+                let bucketMoves = []
 
                 // Horizontal moves
                 for (let h = 0; h < this.height; h++) {
-                    moves.push(this.checkRow(this.getRow(h), 2))
+                    moves.push(this.checkStraightRow(this.getRow(h), 2))
                 }
 
                 // Vertical moves
                 for (let w = 0; w < this.width; w++) {
-                    moves.push(this.checkRow(this.getColumn(w), 2))
+                    moves.push(this.checkStraightRow(this.getColumn(w), 2))
                 }
 
-                console.log(
-                    this.getRow(0),
-                    this.checkRow(this.getRow(0), 2, 2)
-                )
+                // Bucket moves
+                for (let h = 0; h < this.height; h++) {
+                    bucketMoves.push(this.checkBucketPattern(this.getRow(h)))
+                }
 
                 return moves
                     .filter((move) => move[0]?.length > 0)
                     .filter((move) => this.canHaveMatch(move))
+                    .concat(bucketMoves)
                     .flat()
             }
 
@@ -174,19 +193,44 @@
                 }).length > 0
             }
 
-            checkRow (row, amount = 3, skip = 1) {
+            checkBucketPattern (row) {
+                let foundType = null
+                let matches = []
+                let hits = []
+                let x, y
+
+                row.forEach((stone) => {
+                    [x, y] = [stone.x, stone.y]
+                    if (
+                        [this.findAt(x - 1, y - 1), this.findAt(x + 1, y - 1)].filter((e) => e?.value === stone.value).length === 2 ||
+                        [this.findAt(x + 1, y - 1), this.findAt(x + 1, y + 1)].filter((e) => e?.value === stone.value).length === 2 ||
+                        [this.findAt(x - 1, y + 1), this.findAt(x + 1, y + 1)].filter((e) => e?.value === stone.value).length === 2 ||
+                        [this.findAt(x - 1, y - 1), this.findAt(x - 1, y + 1)].filter((e) => e?.value === stone.value).length === 2
+                    ) {
+                        hits.push(stone)
+                    }
+                })
+
+                return hits
+            }
+
+            checkStraightRow (row, amount = 3) {
                 let foundType = null
                 let matches = []
                 let hits = []
 
                 for (let i = 0; i < row.length; i++) {
                     foundType = row[i].value
-                    if (foundType !== matches[matches.length - skip]?.value) {
+
+                    // Is the new stone the same as the one already matched?
+                    if (foundType !== matches[matches.length - 1]?.value) {
                         matches = []
                     }
 
                     matches.push(row[i])
-                    if (matches.length >= amount && row[i + skip] !== foundType) {
+
+                    // Has the amount limit been reached and is the next stone not the same type?
+                    if (matches.length >= amount && row[i + 1] !== foundType) {
                         hits.push(matches)
                     }
                 }
@@ -205,17 +249,13 @@
             clearStones (stones) {
                 stones.forEach((stone) => {
                     stone.y = Math.min(...this.getColumn(stone.x).map((e) => e.y)) - 1
-                    stone.value = this.types[Math.floor(Math.random() * this.types.length)]
                     stone.key = Math.floor(Math.random() * 99999)
+                    stone.value = this.getRandomType()
                 })
             }
 
             findAt (x, y) {
                 return this.matrix.filter((e) => e.y === y && e.x === x)[0]
-            }
-
-            findByKey (key) {
-                return this.matrix.filter((e) => e.key === key)[0]
             }
 
             getRow (y) {
@@ -224,6 +264,10 @@
 
             getColumn (x) {
                 return this.matrix.filter((e) => e.x === x).sort((a, b) => a.y - b.y)
+            }
+
+            getRandomType () {
+                return this.types[Math.floor(Math.random() * this.types.length)]
             }
         }
     </script>
