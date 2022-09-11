@@ -73,7 +73,6 @@
                             }
 
                             this.canSelect = true
-                            this.turn++
                             @this.emit('updateBoard', this.board, this.score, this.combo, this.turn)
                         }
                     }
@@ -112,6 +111,7 @@
                         if (this.board.checkMatches().length > 0) {
                             this.combo = 0
                             this.parseBoard()
+                            this.turn++
                         } else {
                             this.swap(this.selected, stone, 'x')
                             this.swap(this.selected, stone, 'y')
