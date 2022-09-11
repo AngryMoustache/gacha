@@ -10,9 +10,7 @@ class CheckLoggedIn
 {
     public function handle(Request $request, Closure $next, ...$guards)
     {
-        if (! Auth::current()) {
-            return redirect(route('auth.login'));
-        }
+        Auth::currentOrRedirect();
 
         return $next($request);
     }

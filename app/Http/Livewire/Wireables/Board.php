@@ -9,12 +9,17 @@ use Livewire\Wireable;
 class Board implements Wireable
 {
     public Collection $matrix;
+    public int $score = 0;
+    public int $combo = 0;
+    public int $turn = 1;
 
     public function __construct(
         public int $width = 5,
-        public int $height = 5
+        public int $height = 5,
+        public ?Collection $types = null
     ) {
         $this->matrix = (new Collection)->pad($this->height * $this->width, []);
+        $this->types ??= collect(Stone::cases())->pluck('value');
     }
 
     public function fill()
@@ -31,7 +36,7 @@ class Board implements Wireable
     {
         return (object) [
             'key' => rand(0, 999999),
-            'value' => $type ?? Stone::random()->value,
+            'value' => $type ?? $this->types->random(),
             'x' => $x,
             'y' => $y,
         ];
@@ -39,17 +44,19 @@ class Board implements Wireable
 
     public function toLivewire()
     {
-        return [
-            'width' => $this->width,
-            'height' => $this->height,
-            'matrix' => $this->matrix->toArray(),
-        ];
+        return collect(get_object_vars($this))->map(function ($item) {
+            return ($item instanceof Collection) ? $item->toArray() : $item;
+        })->toArray();
     }
 
     public static function fromLivewire($value)
     {
         $board = new self($value['width'], $value['height']);
         $board->matrix = collect($value['matrix'])->map(fn ($stone) => (object) $stone);
+        $board->score = $value['score'] ?? 0;
+        $board->combo = $value['combo'] ?? 0;
+        $board->turn = $value['turn'] ?? 0;
+        $board->types = collect($value['types']);
 
         return $board;
     }

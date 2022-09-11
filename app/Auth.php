@@ -7,12 +7,16 @@ use App\Models\User;
 class Auth
 {
     public const LOGIN_SESSION = 'current-user';
-    public User $user;
+    public ?User $user;
 
     public function current()
     {
-        return $this->user ??= User::find(session(self::LOGIN_SESSION))
-            ?? redirect()->to(route('auth.login'))->send();
+        return $this->user ??= User::find(session(self::LOGIN_SESSION));
+    }
+
+    public function currentOrRedirect()
+    {
+        return $this->current() ?? redirect()->to(route('auth.login'))->send();
     }
 
     public function refresh()

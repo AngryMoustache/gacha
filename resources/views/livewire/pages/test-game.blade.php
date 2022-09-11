@@ -19,6 +19,7 @@
 
         <div class="pt-4 pl-2">
             You have <span x-html="possibleMoves.length"></span> possible move(s)<br>
+            Turn: <span x-html="turn"></span><br>
             Score: <span x-html="score"></span><br>
             <div x-show="combo > 1">
                 <span x-html="combo"></span>x combo !!!
@@ -36,22 +37,22 @@
                 showSelected: false,
                 possibleMoves: [],
                 combo: 0,
-                score: 0,
-                readyToLoad: false,
-                types: @json($types),
+                score: @json($board->score),
+                turn: @json($board->turn),
+                readyToLoad: @json($readyToLoad),
 
                 init () {
-                    this.board = new Board(@json($board).matrix, this.types)
+                    this.board = new Board(@json($board).matrix, @json($board).types)
                     this.parseBoard(true)
                 },
 
                 parseBoard (fast = false) {
                     let matches = this.board.checkMatches()
+                    this.canSelect = false
 
                     if (matches.length > 0) {
                         this.combo++
                         this.score += (matches.length * this.combo)
-                        this.canSelect = false
                         this.board.clearStones(matches)
 
                         window.setTimeout(() => {
@@ -62,7 +63,6 @@
                         this.possibleMoves = this.board.checkMoves()
 
                         if (this.possibleMoves.length === 0) {
-                            this.canSelect = false
                             this.board.shuffle()
                             window.setTimeout(() => this.parseBoard(fast), fast ? 1 : 750);
                         } else {
@@ -73,6 +73,8 @@
                             }
 
                             this.canSelect = true
+                            this.turn++
+                            @this.emit('updateBoard', this.board, this.score, this.combo, this.turn)
                         }
                     }
                 },
@@ -113,10 +115,10 @@
                         } else {
                             this.swap(this.selected, stone, 'x')
                             this.swap(this.selected, stone, 'y')
+                            this.canSelect = true
                         }
 
                         this.selected = null
-                        this.canSelect = true
                     }, 500)
                 },
 
