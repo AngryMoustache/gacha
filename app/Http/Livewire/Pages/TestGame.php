@@ -20,8 +20,8 @@ class TestGame extends Component
 
     public function mount()
     {
-        if (Auth::current()) {
-            $game = Game::where('user_id', Auth::current()->id)->first();
+        $game = Game::where('user_id', Auth::current()?->id)->first();
+        if (Auth::current() && $game) {
             $this->board = Board::fromLivewire($game->data);
             $this->readyToLoad = true;
         } else {
