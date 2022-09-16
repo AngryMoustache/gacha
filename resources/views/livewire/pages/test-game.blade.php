@@ -1,5 +1,5 @@
 <div class="grid m-4 gap-4">
-    <x-card x-data="game">
+    <x-card x-data="game" class="flex">
         <div
             x-show="readyToLoad"
             class="relative overflow-hidden"
@@ -8,27 +8,43 @@
             <template x-for="stone in board.matrix" :key="stone.key">
                 <div
                     @click="select(stone)"
-                    :class="'stone absolute m-1 w-16 h-16 bg-' + stone.value + '-500 rounded-lg ' + (showSelected && stone.key === selected?.key ? 'stone-selected' : '')"
-                    :style="'top: ' + (stone.y * 4.25) + 'rem; left: ' + (stone.x * 4.25) + 'rem'"
                     {{-- :src="'{{ asset('./images/stones') }}/' + stone.value + '.png'" --}}
+                    :class="'stone absolute m-1 w-16 h-16 bg-' + stone.value + '-500 rounded-lg ' + (showSelected && stone.key === selected?.key ? 'stone-selected' : '')"
+                    :style="'transition: all .' + 4 * timing + 's; top: ' + (stone.y * 4.25) + 'rem; left: ' + (stone.x * 4.25) + 'rem;'"
                 >
                     {{-- TODO: icon --}}
                 </div>
             </template>
         </div>
 
-        <div class="pt-4 pl-2">
+        <div class="pt-4 pl-8">
             You have <span x-html="possibleMoves.length"></span> possible move(s)<br>
             Turn: <span x-html="turn"></span><br>
             Score: <span x-html="score"></span><br>
             <div x-show="combo > 1">
-                <span x-html="combo"></span>x combo !!!
+                <span :style="'font-size: ' + (combo >= 6 ? 3 : combo / 2) + 'rem'">
+                    <span x-html="combo"></span>x combo !!!
+                </span>
+            </div>
+
+            <div class="pt-4">
+                <span :class="timing === 100 ? 'opacity-50' : 0">
+                    <x-form.button wire:target="" @click="timing = 100">x1</x-form.button>
+                </span>
+
+                <span :class="timing === 66 ? 'opacity-50' : 0">
+                    <x-form.button wire:target="" @click="timing = 66">x2</x-form.button>
+                </span>
+
+                <span :class="timing === 33 ? 'opacity-50' : 0">
+                    <x-form.button wire:target="" @click="timing = 33">x3</x-form.button>
+                </span>
             </div>
         </div>
+
     </x-card>
 
     <script>
-
         function game () {
             return {
                 board: [],
@@ -37,6 +53,7 @@
                 showSelected: false,
                 possibleMoves: [],
                 combo: 0,
+                timing: 100,
                 score: @json($board->score),
                 turn: @json($board->turn),
                 readyToLoad: @json($readyToLoad),
@@ -57,14 +74,14 @@
 
                         window.setTimeout(() => {
                             this.board.dropStones()
-                            window.setTimeout(() => this.parseBoard(fast), fast ? 1 : 750);
-                        }, fast ? 1 : 300);
+                            window.setTimeout(() => this.parseBoard(fast), fast ? 1 : this.timing * 7);
+                        }, fast ? 1 : this.timing * 3);
                     } else {
                         this.possibleMoves = this.board.checkMoves()
 
                         if (this.possibleMoves.length === 0) {
                             this.board.shuffle()
-                            window.setTimeout(() => this.parseBoard(fast), fast ? 1 : 750);
+                            window.setTimeout(() => this.parseBoard(fast), fast ? 1 : this.timing * 7);
                         } else {
                             if (this.readyToLoad === false) {
                                 this.readyToLoad = true
@@ -119,7 +136,7 @@
                         }
 
                         this.selected = null
-                    }, 500)
+                    }, this.timing * 5)
                 },
 
                 swap (object1, object2, key) {
@@ -301,7 +318,6 @@
     <style>
         .stone {
             z-index: 10;
-            transition: all .5s;
         }
 
         .stone-selected {
