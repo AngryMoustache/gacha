@@ -7,9 +7,11 @@
         >
             <template x-for="stone in board.matrix" :key="stone.key">
                 <div
-                    @click="select(stone)"
+                    @mousedown="select(stone)"
+                    @mouseup="stopDragging($event, stone)"
+                    @mouseenter="moveDrag($event, stone)"
                     {{-- :src="'{{ asset('./images/stones') }}/' + stone.value + '.png'" --}}
-                    :class="'stone absolute m-1 w-16 h-16 bg-' + stone.value + '-500 rounded-lg ' + (showSelected && stone.key === selected?.key ? 'stone-selected' : '')"
+                    :class="'stone select-none absolute m-1 w-16 h-16 bg-' + stone.value + '-500 rounded-lg ' + (showSelected && stone.key === selected?.key ? 'stone-selected' : '')"
                     :style="'transition: all .' + 4 * timing + 's; top: ' + (stone.y * 4.25) + 'rem; left: ' + (stone.x * 4.25) + 'rem;'"
                 >
                     {{-- TODO: icon --}}
@@ -52,6 +54,7 @@
                 canSelect: false,
                 showSelected: false,
                 possibleMoves: [],
+                dragging: false,
                 combo: 0,
                 timing: 100,
                 score: @json($board->score),
@@ -95,8 +98,32 @@
                     }
                 },
 
+                stopDragging (e, stone) {
+                    if (this.dragging && stone.key !== this.selected?.key) {
+                        this.select(stone)
+                    }
+
+                    this.dragging = false
+                },
+
+                moveDrag (e, stone) {
+                    if (! this.selected || this.dragging === false) {
+                        return
+                    }
+
+                    if (stone.key === this.selected?.key) {
+                        return
+                    }
+
+                    this.select(stone)
+                },
+
                 select (stone) {
-                    if (! this.canSelect || stone.key === this.selected?.key) {
+                    if (! this.canSelect) {
+                        return
+                    }
+
+                    if (stone.key === this.selected?.key) {
                         this.selected = null
                         return
                     }
@@ -104,6 +131,7 @@
                     if (! this.selected) {
                         this.selected = stone
                         this.showSelected = true
+                        this.dragging = true
                         return
                     }
 
