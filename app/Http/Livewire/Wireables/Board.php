@@ -2,7 +2,8 @@
 
 namespace App\Http\Livewire\Wireables;
 
-use App\Enums\Stone;
+use App\Enums\StoneType;
+use App\Enums\StoneValue;
 use Illuminate\Support\Collection;
 use Livewire\Wireable;
 
@@ -19,7 +20,7 @@ class Board implements Wireable
         public ?Collection $types = null
     ) {
         $this->matrix = (new Collection)->pad($this->height * $this->width, []);
-        $this->types ??= collect(Stone::cases())->pluck('value');
+        $this->types ??= collect(StoneValue::cases())->pluck('value');
     }
 
     public function fill()
@@ -37,6 +38,7 @@ class Board implements Wireable
         return (object) [
             'key' => rand(0, 999999),
             'value' => $type ?? $this->types->random(),
+            'type' => StoneType::STONE,
             'x' => $x,
             'y' => $y,
         ];

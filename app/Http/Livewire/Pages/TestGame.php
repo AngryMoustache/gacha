@@ -36,7 +36,7 @@ class TestGame extends Component
             return;
         }
 
-        $this->board->matrix = collect($board['matrix']);
+        $this->board->matrix = collect($board);
         $this->board->score = $score;
         $this->board->turn = $turn;
         if ($combo > $this->board->combo) {

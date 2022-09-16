@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum Stone: string
+enum StoneValue: string
 {
     case RED = 'red';
     case BLUE = 'blue';
